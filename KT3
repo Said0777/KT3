@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог товаров</title>
+</head>
+<body>
+    <script>
+        // Создаем стили динамически
+        const style = document.createElement('style');
+        style.textContent = `
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f9f9f9;
+                color: #333;
+                margin: 0;
+                padding: 20px;
+            }
+            #catalog {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+            }
+            .category {
+                margin-bottom: 10px;
+            }
+            .category-title {
+                font-weight: bold;
+                cursor: pointer;
+                padding: 10px;
+                background-color: #007bff;
+                color: #fff;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+            }
+            .category-title:hover {
+                background-color: #0056b3;
+            }
+            .sub-category {
+                margin-left: 20px;
+                margin-top: 10px;
+                border-left: 2px solid #007bff;
+                padding-left: 10px;
+                transition: opacity 0.3s ease, max-height 0.3s ease;
+                overflow: hidden;
+                max-height: 0;
+                opacity: 0;
+            }
+            .sub-category.visible {
+                max-height: 500px;
+                opacity: 1;
+            }
+            .sub-category .category-title {
+                background-color: #e9ecef;
+                color: #333;
+            }
+            .sub-category .category-title:hover {
+                background-color: #d6d8db;
+            }
+            .category-title::after {
+                content: '▼';
+                float: right;
+                transition: transform 0.3s ease;
+            }
+            .category-title.collapsed::after {
+                transform: rotate(-90deg);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Данные каталога
+        const catalogData = {
+            "Книги": {
+                "Отечественные": {
+                    "Детективы": {},
+                    "Научная фантастика": {}
+                },
+                "Зарубежные": {
+                    "Детективы": {},
+                    "Научная фантастика": {}
+                }
+            },
+            "DVD": {
+                "Отечественные": {
+                    "Детективы": {},
+                    "Научная фантастика": {},
+                    "Исторические": {}
+                },
+                "Зарубежные": {
+                    "Детективы": {},
+                    "Научная фантастика": {}
+                }
+            }
+        };
+
+        // Функция для создания элемента каталога
+        function createCatalogItem(name, data) {
+            const container = document.createElement('div');
+            container.className = 'category';
+
+            const title = document.createElement('div');
+            title.className = 'category-title';
+            title.textContent = name;
+
+            container.appendChild(title);
+
+            if (Object.keys(data).length > 0) {
+                const subContainer = document.createElement('div');
+                subContainer.className = 'sub-category';
+
+                for (const key in data) {
+                    subContainer.appendChild(createCatalogItem(key, data[key]));
+                }
+
+                container.appendChild(subContainer);
+
+                title.addEventListener('click', () => {
+                    subContainer.classList.toggle('visible');
+                    title.classList.toggle('collapsed');
+                });
+            }
+
+            return container;
+        }
+
+        // Создаем контейнер для каталога
+        const catalogContainer = document.createElement('div');
+        catalogContainer.id = 'catalog';
+        document.body.appendChild(catalogContainer);
+
+        // Заполняем каталог данными
+        for (const key in catalogData) {
+            catalogContainer.appendChild(createCatalogItem(key, catalogData[key]));
+        }
+    </script>
+</body>
+</html>
