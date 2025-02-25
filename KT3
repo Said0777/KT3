@@ -3,139 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каталог товаров</title>
+    <title>Выпадающее меню</title>
 </head>
 <body>
-    <script>
-        // Создаем стили динамически
-        const style = document.createElement('style');
-        style.textContent = `
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f9f9f9;
-                color: #333;
-                margin: 0;
-                padding: 20px;
-            }
-            #catalog {
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: #fff;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                padding: 20px;
-            }
-            .category {
-                margin-bottom: 10px;
-            }
-            .category-title {
-                font-weight: bold;
-                cursor: pointer;
-                padding: 10px;
-                background-color: #007bff;
-                color: #fff;
-                border-radius: 4px;
-                transition: background-color 0.3s ease;
-            }
-            .category-title:hover {
-                background-color: #0056b3;
-            }
-            .sub-category {
-                margin-left: 20px;
-                margin-top: 10px;
-                border-left: 2px solid #007bff;
-                padding-left: 10px;
-                transition: opacity 0.3s ease, max-height 0.3s ease;
-                overflow: hidden;
-                max-height: 0;
-                opacity: 0;
-            }
-            .sub-category.visible {
-                max-height: 500px;
-                opacity: 1;
-            }
-            .sub-category .category-title {
-                background-color: #e9ecef;
-                color: #333;
-            }
-            .sub-category .category-title:hover {
-                background-color: #d6d8db;
-            }
-            .category-title::after {
-                content: '▼';
-                float: right;
-                transition: transform 0.3s ease;
-            }
-            .category-title.collapsed::after {
-                transform: rotate(-90deg);
-            }
-        `;
-        document.head.appendChild(style);
 
-        // Данные каталога
-        const catalogData = {
-            "Книги": {
-                "Отечественные": {
-                    "Детективы": {},
-                    "Научная фантастика": {}
-                },
-                "Зарубежные": {
-                    "Детективы": {},
-                    "Научная фантастика": {}
-                }
-            },
-            "DVD": {
-                "Отечественные": {
-                    "Детективы": {},
-                    "Научная фантастика": {},
-                    "Исторические": {}
-                },
-                "Зарубежные": {
-                    "Детективы": {},
-                    "Научная фантастика": {}
-                }
-            }
-        };
-
-        // Функция для создания элемента каталога
-        function createCatalogItem(name, data) {
-            const container = document.createElement('div');
-            container.className = 'category';
-
-            const title = document.createElement('div');
-            title.className = 'category-title';
-            title.textContent = name;
-
-            container.appendChild(title);
-
-            if (Object.keys(data).length > 0) {
-                const subContainer = document.createElement('div');
-                subContainer.className = 'sub-category';
-
-                for (const key in data) {
-                    subContainer.appendChild(createCatalogItem(key, data[key]));
-                }
-
-                container.appendChild(subContainer);
-
-                title.addEventListener('click', () => {
-                    subContainer.classList.toggle('visible');
-                    title.classList.toggle('collapsed');
-                });
-            }
-
-            return container;
-        }
-
-        // Создаем контейнер для каталога
-        const catalogContainer = document.createElement('div');
-        catalogContainer.id = 'catalog';
-        document.body.appendChild(catalogContainer);
-
-        // Заполняем каталог данными
-        for (const key in catalogData) {
-            catalogContainer.appendChild(createCatalogItem(key, catalogData[key]));
-        }
-    </script>
+    
 </body>
+<script>
+     document.addEventListener('DOMContentLoaded', function() {
+        // Создаем корневой элемент body
+        const body = document.body;
+
+        // Создаем заголовок
+        const h1 = document.createElement('h1');
+        h1.textContent = 'Каталог товаров';
+        h1.style.textAlign = 'center'; // Центрируем заголовок
+        h1.style.color = '#333'; // Цвет текста
+        h1.style.fontFamily = 'Arial, sans-serif'; // Шрифт
+        body.appendChild(h1);
+
+        // Создаем основное меню
+        const menu = document.createElement('ul');
+        menu.id = 'menu';
+        menu.style.listStyleType = 'none'; // Убираем маркеры списка
+        menu.style.padding = '0'; // Убираем отступы
+        menu.style.margin = '20px auto'; // Центрируем меню
+        menu.style.width = '300px'; // Ширина меню
+        body.appendChild(menu);
+
+        // Функция для создания вложенных списков
+        function createSubMenu(items) {
+            const ul = document.createElement('ul');
+            ul.style.display = 'none'; // Скрываем вложенные списки по умолчанию
+            ul.style.paddingLeft = '20px'; // Отступ для вложенных списков
+            ul.style.marginTop = '5px'; // Отступ сверху
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.label;
+                li.style.padding = '10px'; // Отступы внутри пунктов
+                li.style.backgroundColor = '#f9f9f9'; // Фон пунктов
+                li.style.border = '1px solid #ddd'; // Граница пунктов
+                li.style.marginBottom = '5px'; // Отступ между пунктами
+                li.style.borderRadius = '5px'; // Скругление углов
+                li.style.cursor = 'pointer'; // Курсор в виде указателя
+                li.style.fontFamily = 'Arial, sans-serif'; // Шрифт
+                li.style.color = '#555'; // Цвет текста
+
+                if (item.children) {
+                    li.appendChild(createSubMenu(item.children));
+                } else if (item.link) {
+                    const a = document.createElement('a');
+                    a.href = item.link;
+                    a.textContent = item.label;
+                    a.style.textDecoration = 'none'; // Убираем подчеркивание ссылки
+                    a.style.color = 'inherit'; // Наследуем цвет текста
+                    li.textContent = '';
+                    li.appendChild(a);
+                }
+                ul.appendChild(li);
+            });
+            return ul;
+        }
+
+        // Данные для меню
+        const menuData = [
+            {
+                label: 'Книги',
+                children: [
+                    {
+                        label: 'Отечественные',
+                        children: [
+                            { label: 'Детективы', link: '#' },
+                            { label: 'Научная фантастика', link: '#' },
+                            { label: 'Исторические', link: '#' }
+                        ]
+                    },
+                    {
+                        label: 'Зарубежные',
+                        children: [
+                            { label: 'Детективы', link: '#' },
+                            { label: 'Научная фантастика', link: '#' },
+                            { label: 'Исторические', link: '#' }
+                        ]
+                    }
+                ]
+            },
+            {
+                label: 'DVD',
+                children: [
+                    {
+                        label: 'Отечественные',
+                        children: [
+                            { label: 'Детективы', link: '#' },
+                            { label: 'Научная фантастика', link: '#' },
+                            { label: 'Исторические', link: '#' }
+                        ]
+                    },
+                    {
+                        label: 'Зарубежные',
+                        children: [
+                            { label: 'Детективы', link: '#' },
+                            { label: 'Научная фантастика', link: '#' },
+                            { label: 'Исторические', link: '#' }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Создаем меню на основе данных
+        menuData.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item.label;
+            li.style.padding = '10px';
+            li.style.backgroundColor = '#f1f1f1';
+            li.style.border = '1px solid #ccc';
+            li.style.marginBottom = '10px';
+            li.style.borderRadius = '5px';
+            li.style.cursor = 'pointer';
+            li.style.fontFamily = 'Arial, sans-serif';
+            li.style.color = '#333';
+
+            if (item.children) {
+                li.appendChild(createSubMenu(item.children));
+            }
+            menu.appendChild(li);
+        });
+
+        // Обработчик клика для раскрытия/скрытия подменю
+        menu.addEventListener('click', function(event) {
+            if (event.target.tagName === 'LI') {
+                const subMenu = event.target.querySelector('ul');
+                if (subMenu) {
+                    subMenu.style.display = subMenu.style.display === 'none' ? 'block' : 'none';
+                } else if (event.target.querySelector('a')) {
+                    const link = event.target.querySelector('a');
+                    window.location.href = link.href;
+                }
+            }
+        });
+    });
+    </script>
 </html>
